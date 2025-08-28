@@ -230,6 +230,24 @@ app.whenReady().then(() => {
       label: '⏱️ Reminder Interval',
       submenu: [
         {
+          label: 'Every 1 minute',
+          type: 'radio',
+          checked: currentInterval === 1,
+          click: () => {
+            currentInterval = 1
+            setReminderInterval(1)
+          },
+        },
+        {
+          label: 'Every 5 minutes',
+          type: 'radio',
+          checked: currentInterval === 5,
+          click: () => {
+            currentInterval = 5
+            setReminderInterval(5)
+          },
+        },
+        {
           label: 'Every 15 minutes',
           type: 'radio',
           checked: currentInterval === 15,
@@ -263,15 +281,6 @@ app.whenReady().then(() => {
           click: () => {
             currentInterval = 60
             setReminderInterval(60)
-          },
-        },
-        {
-          label: 'Every 90 minutes',
-          type: 'radio',
-          checked: currentInterval === 90,
-          click: () => {
-            currentInterval = 90
-            setReminderInterval(90)
           },
         },
       ] as MenuItemConstructorOptions[],
