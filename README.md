@@ -136,11 +136,12 @@ bun run dist
 
 Choose from predefined intervals:
 
+- Every 1 minute
+- Every 5 minutes
 - Every 15 minutes
 - Every 30 minutes (default)
 - Every 45 minutes
 - Every 60 minutes
-- Every 90 minutes
 
 ### Auto-start
 
