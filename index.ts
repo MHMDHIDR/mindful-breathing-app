@@ -6,6 +6,20 @@ import notifier from 'node-notifier'
 let tray: Tray | null = null
 let intervalId: NodeJS.Timeout | null = null
 
+// Sound settings
+let selectedSound: string = 'No Sound'
+const availableSounds = [
+  'No Sound',
+  'Spring Forest Nature Sound.mp3',
+  'Nature Sounds.mp3',
+  'Relaxing Ocean Sounds.mp3',
+  'Relaxing Ocean Waves.mp3',
+  'Chirping Sound Effect.mp3',
+  'Chirping Sound Effects.mp3',
+  'Chirping Bird Sound.mp3',
+  'Chirping Sound Effects 2.mp3',
+]
+
 // Motivational messages pool
 const messages: string[] = [
   "You're doing amazing! Time for a 30-second breathing break 🌟",
@@ -39,15 +53,55 @@ function getRandomBreathingInstruction(): string {
   return breathingInstructions[Math.floor(Math.random() * breathingInstructions.length)]!
 }
 
+// Play selected sound
+function playNotificationSound(): void {
+  if (selectedSound === 'No Sound') {
+    return
+  }
+
+  try {
+    const soundPath = path.join(process.cwd(), 'sounds', selectedSound)
+    if (fs.existsSync(soundPath)) {
+      // Use node-notifier's built-in sound or system command
+      const { exec } = require('child_process')
+
+      if (process.platform === 'darwin') {
+        // macOS - use afplay
+        exec(`afplay "${soundPath}"`, (error: any) => {
+          if (error) console.log('Sound playback error:', error)
+        })
+      } else if (process.platform === 'win32') {
+        // Windows - use powershell
+        exec(
+          `powershell -c "(New-Object Media.SoundPlayer '${soundPath}').PlaySync();"`,
+          (error: any) => {
+            if (error) console.log('Sound playback error:', error)
+          }
+        )
+      } else {
+        // Linux - use aplay or paplay
+        exec(`aplay "${soundPath}" || paplay "${soundPath}"`, (error: any) => {
+          if (error) console.log('Sound playback error:', error)
+        })
+      }
+    }
+  } catch (error) {
+    console.log('Failed to play sound:', error)
+  }
+}
+
 // Send notification
 function sendBreathingReminder(): void {
   const message = getRandomMessage()
   const instruction = getRandomBreathingInstruction()
 
+  // Play custom sound
+  playNotificationSound()
+
   notifier.notify({
     title: '🧘 Mindful Breathing Break',
     message: `${message}\n\n${instruction}`,
-    sound: true,
+    sound: false, // Disable built-in sound since we're using custom sounds
     wait: false,
     timeout: 10,
     actions: ['Start', 'Skip'], // macOS only
@@ -157,11 +211,14 @@ app.whenReady().then(() => {
     {
       label: '🎯 Quick Breathing Exercise',
       click: () => {
+        // Play custom sound for quick exercise too
+        playNotificationSound()
+
         notifier.notify({
           title: '🧘 Quick Breathing Exercise',
           message:
             "Let's do it together!\n\n1. Inhale slowly (4 seconds)\n2. Hold (4 seconds)\n3. Exhale slowly (4 seconds)\n4. Repeat 3 times\n\nYou've got this! 💪",
-          sound: true,
+          sound: false, // Use our custom sound instead
           timeout: 20,
         })
       },
@@ -218,6 +275,26 @@ app.whenReady().then(() => {
           },
         },
       ] as MenuItemConstructorOptions[],
+    },
+    {
+      type: 'separator',
+    },
+    {
+      label: '🔊 Notification Sound',
+      submenu: availableSounds.map(sound => ({
+        label: sound === 'No Sound' ? '🔇 No Sound' : `🎵 ${sound.replace('.mp3', '')}`,
+        type: 'radio' as const,
+        checked: selectedSound === sound,
+        click: () => {
+          selectedSound = sound
+          console.log(`Sound changed to: ${sound}`)
+
+          // Test the sound when selected (except for "No Sound")
+          if (sound !== 'No Sound') {
+            playNotificationSound()
+          }
+        },
+      })),
     },
     {
       type: 'separator',
