@@ -1,6 +1,7 @@
 import { app, Tray, Menu, nativeImage, type MenuItemConstructorOptions } from 'electron'
 import * as path from 'path'
 import * as fs from 'fs'
+import { exec } from 'child_process'
 import notifier from 'node-notifier'
 
 let tray: Tray | null = null
@@ -61,33 +62,43 @@ function playNotificationSound(): void {
 
   try {
     const soundPath = path.join(process.cwd(), 'sounds', selectedSound)
-    if (fs.existsSync(soundPath)) {
-      // Use node-notifier's built-in sound or system command
-      const { exec } = require('child_process')
 
+    if (fs.existsSync(soundPath)) {
       if (process.platform === 'darwin') {
         // macOS - use afplay
-        exec(`afplay "${soundPath}"`, (error: any) => {
-          if (error) console.log('Sound playback error:', error)
-        })
+        setTimeout(() => {
+          exec(`afplay "${soundPath}"`, { timeout: 10000 }, error => {
+            if (error) {
+              console.error('Sound playback error:', error)
+            } else {
+              console.info('Sound played successfully')
+            }
+          })
+        }, 100)
       } else if (process.platform === 'win32') {
         // Windows - use powershell
         exec(
           `powershell -c "(New-Object Media.SoundPlayer '${soundPath}').PlaySync();"`,
-          (error: any) => {
-            if (error) console.log('Sound playback error:', error)
+          error => {
+            if (error) {
+            } else {
+            }
           }
         )
       } else {
         // Linux - use aplay or paplay
-        exec(`aplay "${soundPath}" || paplay "${soundPath}"`, (error: any) => {
-          if (error) console.log('Sound playback error:', error)
-        })
+        exec(
+          `aplay "${soundPath}" 2>/dev/null || paplay "${soundPath}" 2>/dev/null`,
+          error => {
+            if (error) {
+            } else {
+            }
+          }
+        )
       }
+    } else {
     }
-  } catch (error) {
-    console.log('Failed to play sound:', error)
-  }
+  } catch (error) {}
 }
 
 // Send notification
@@ -120,8 +131,6 @@ function setReminderInterval(minutes: number): void {
   intervalId = setInterval(() => {
     sendBreathingReminder()
   }, milliseconds)
-
-  console.log(`Breathing reminders set for every ${minutes} minutes`)
 }
 
 // Create the app
@@ -139,18 +148,16 @@ app.whenReady().then(() => {
 
   // Try each path until we find the icon
   for (const testPath of possibleIconPaths) {
-    console.log('Trying icon path:', testPath)
     if (fs.existsSync(testPath)) {
       iconPath = testPath
       icon = nativeImage.createFromPath(iconPath)
-      console.log('Successfully loaded icon from:', iconPath)
+
       break
     }
   }
 
   // Fallback: create a simple programmatic icon if file not found
   if (!icon || icon.isEmpty()) {
-    console.log('Icon file not found, creating fallback icon')
     const size = { width: 16, height: 16 }
     const buffer = Buffer.alloc(size.width * size.height * 4)
 
@@ -185,7 +192,6 @@ app.whenReady().then(() => {
   }
 
   tray = new Tray(icon)
-  console.log('Tray created successfully')
 
   // Set tooltip
   tray.setToolTip('Mindful Breathing Reminder')
@@ -296,7 +302,6 @@ app.whenReady().then(() => {
         checked: selectedSound === sound,
         click: () => {
           selectedSound = sound
-          console.log(`Sound changed to: ${sound}`)
 
           // Test the sound when selected (except for "No Sound")
           if (sound !== 'No Sound') {
@@ -348,7 +353,6 @@ app.whenReady().then(() => {
   })
 
   // Log for debugging
-  console.log('Mindful Breathing app is running in the menu bar')
 })
 
 // Prevent app from closing when all windows are closed
