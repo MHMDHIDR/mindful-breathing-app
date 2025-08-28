@@ -1,5 +1,8 @@
 {
   "name": "mindful-breathing-app",
+  "version": "1.0.0",
+  "description": "A lightweight desktop app for mindful breathing reminders",
+  "author": "Mohammed Haydar",
   "module": "index.ts",
   "type": "module",
   "private": true,
@@ -7,14 +10,70 @@
     "start": "bun run build:ts && electron .",
     "build:ts": "bun build ./index.ts --outdir ./dist --target node --outfile index.js --external electron --external node-notifier",
     "dev": "bun run build:ts && electron .",
-    "dist": "bun run build:ts && electron-builder"
+    "dist": "bun run build:ts && electron-builder",
+    "dist:mac": "bun run build:ts && electron-builder --mac",
+    "dist:win": "bun run build:ts && electron-builder --win",
+    "dist:linux": "bun run build:ts && electron-builder --linux"
   },
   "main": "dist/index.js",
+  "build": {
+    "appId": "com.mindfulbreathing.app",
+    "productName": "Mindful Breathing",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "icons/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "icon": "icons/icon.png",
+      "category": "public.app-category.healthcare-fitness",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "icon": "icons/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "icon": "icons/icon.png",
+      "category": "Utility",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/node": "^24.3.0",
     "@types/node-notifier": "^8.0.5",
-    "electron": "^37.4.0"
+    "electron": "^37.4.0",
+    "electron-builder": "^26.0.12"
   },
   "peerDependencies": {
     "typescript": "^5"

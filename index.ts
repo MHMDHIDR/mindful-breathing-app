@@ -1,5 +1,6 @@
 import { app, Tray, Menu, nativeImage, type MenuItemConstructorOptions } from 'electron'
 import * as path from 'path'
+import * as fs from 'fs'
 import notifier from 'node-notifier'
 
 let tray: Tray | null = null
@@ -72,8 +73,52 @@ function setReminderInterval(minutes: number): void {
 // Create the app
 app.whenReady().then(() => {
   // Load custom icon from icons directory
-  const iconPath = path.join(__dirname, '..', 'icons', 'icon.png')
-  let icon = nativeImage.createFromPath(iconPath)
+  // Try multiple possible paths for the icon
+  const possibleIconPaths = [
+    path.join(__dirname, '..', 'icons', 'icon.png'), // From dist folder
+    path.join(process.cwd(), 'icons', 'icon.png'), // From project root
+    path.join(__dirname, 'icons', 'icon.png'), // If icons copied to dist
+  ]
+
+  let icon
+  let iconPath = ''
+
+  // Try each path until we find the icon
+  for (const testPath of possibleIconPaths) {
+    console.log('Trying icon path:', testPath)
+    if (fs.existsSync(testPath)) {
+      iconPath = testPath
+      icon = nativeImage.createFromPath(iconPath)
+      console.log('Successfully loaded icon from:', iconPath)
+      break
+    }
+  }
+
+  // Fallback: create a simple programmatic icon if file not found
+  if (!icon || icon.isEmpty()) {
+    console.log('Icon file not found, creating fallback icon')
+    const size = { width: 16, height: 16 }
+    const buffer = Buffer.alloc(size.width * size.height * 4)
+
+    // Create a simple breathing circle pattern
+    for (let y = 0; y < size.height; y++) {
+      for (let x = 0; x < size.width; x++) {
+        const index = (y * size.width + x) * 4
+        const centerX = size.width / 2
+        const centerY = size.height / 2
+        const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2)
+
+        if (distance <= 6) {
+          buffer[index] = 100 // R
+          buffer[index + 1] = 150 // G
+          buffer[index + 2] = 200 // B
+          buffer[index + 3] = 255 // A
+        }
+      }
+    }
+
+    icon = nativeImage.createFromBuffer(buffer, size)
+  }
 
   // For macOS, create a template image that adapts to menu bar theme
   if (process.platform === 'darwin') {
@@ -86,6 +131,7 @@ app.whenReady().then(() => {
   }
 
   tray = new Tray(icon)
+  console.log('Tray created successfully')
 
   // Set tooltip
   tray.setToolTip('Mindful Breathing Reminder')
