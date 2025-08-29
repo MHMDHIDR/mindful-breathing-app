@@ -18,6 +18,8 @@ export interface AppSettings {
   reminders: Record<string, ReminderConfig>
   globalSoundEnabled: boolean
   startAtLogin: boolean
+  silentMode: boolean
+  silentModeOriginalStates: Record<string, boolean>
 }
 
 export abstract class BaseReminder {

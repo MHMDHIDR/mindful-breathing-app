@@ -38,6 +38,8 @@ class SettingsManagerImpl {
         },
         globalSoundEnabled: true,
         startAtLogin: false,
+        silentMode: false,
+        silentModeOriginalStates: {},
       },
     })
   }
@@ -82,6 +84,22 @@ class SettingsManagerImpl {
     if (!this.getReminderConfig(config.id)) {
       this.store.set(`reminders.${config.id}`, config)
     }
+  }
+
+  getSilentMode(): boolean {
+    return this.store.get('silentMode', false)
+  }
+
+  setSilentMode(enabled: boolean): void {
+    this.store.set('silentMode', enabled)
+  }
+
+  getSilentModeOriginalStates(): Record<string, boolean> {
+    return this.store.get('silentModeOriginalStates', {})
+  }
+
+  setSilentModeOriginalStates(states: Record<string, boolean>): void {
+    this.store.set('silentModeOriginalStates', states)
   }
 }
 

@@ -15,10 +15,21 @@ export function buildContextMenu(): Menu {
       ? `🧘 ${enabledCount} Reminder${enabledCount > 1 ? 's' : ''} Active`
       : '😴 No Reminders Active'
 
+  const isSilentMode = reminderSystem.isSilentMode()
+
   const menuItems: MenuItemConstructorOptions[] = [
     {
       label: statusText,
       enabled: false,
+    },
+    {
+      type: 'separator',
+    },
+    {
+      label: isSilentMode ? '🔊 Restore Reminders' : '🔇 Silent Mode',
+      click: () => {
+        reminderSystem.toggleSilentMode()
+      },
     },
     {
       type: 'separator',

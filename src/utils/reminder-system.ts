@@ -114,6 +114,51 @@ class ReminderSystemImpl {
       this.stopReminder(reminderId)
     })
   }
+
+  toggleSilentMode(): void {
+    const currentSilentMode = settingsManager.getSilentMode()
+
+    if (!currentSilentMode) {
+      // Entering silent mode - save current enabled states and disable all
+      const allConfigs = this.getAllConfigs()
+      const originalStates: Record<string, boolean> = {}
+
+      Object.keys(allConfigs).forEach(reminderId => {
+        const config = allConfigs[reminderId]
+        if (config) {
+          originalStates[reminderId] = config.enabled
+          if (config.enabled) {
+            this.updateReminderConfig(reminderId, { enabled: false })
+          }
+        }
+      })
+
+      settingsManager.setSilentModeOriginalStates(originalStates)
+      settingsManager.setSilentMode(true)
+    } else {
+      // Exiting silent mode - restore original states
+      const originalStates = settingsManager.getSilentModeOriginalStates()
+
+      Object.keys(originalStates).forEach(reminderId => {
+        const shouldBeEnabled = originalStates[reminderId]
+        if (shouldBeEnabled) {
+          this.updateReminderConfig(reminderId, { enabled: true })
+        }
+      })
+
+      settingsManager.setSilentMode(false)
+      settingsManager.setSilentModeOriginalStates({})
+    }
+
+    // Notify menu to update
+    if (onConfigChangeCallback) {
+      onConfigChangeCallback()
+    }
+  }
+
+  isSilentMode(): boolean {
+    return settingsManager.getSilentMode()
+  }
 }
 
 export const reminderSystem = new ReminderSystemImpl()

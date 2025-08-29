@@ -111,7 +111,7 @@ function createTrayIcon(): void {
 
   // Create tray
   tray = new Tray(icon)
-  tray.setToolTip('Mindful Breathing Reminder')
+  tray.setToolTip('Mindful Wellness Reminder')
 
   // Set context menu
   updateTrayMenu()
