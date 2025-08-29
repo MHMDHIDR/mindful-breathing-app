@@ -34,6 +34,9 @@
     "mac": {
       "icon": "icons/icon.png",
       "category": "public.app-category.healthcare-fitness",
+      "extendInfo": {
+        "LSUIElement": true
+      },
       "target": [
         {
           "target": "dmg",

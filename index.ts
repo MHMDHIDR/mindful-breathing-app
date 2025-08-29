@@ -69,14 +69,11 @@ function playNotificationSound(): void {
       soundPath = soundPath.replace('app.asar', 'app.asar.unpacked')
     }
 
-    console.log('Attempting to play sound from:', soundPath)
-
     // Fallback for development
     if (!fs.existsSync(soundPath)) {
       const devPath = path.join(process.cwd(), 'sounds', selectedSound)
       if (fs.existsSync(devPath)) {
         soundPath = devPath
-        console.log('Using development path:', soundPath)
       }
     }
 
@@ -97,7 +94,6 @@ function playNotificationSound(): void {
       }
     } else {
       console.error('Sound file not found:', selectedSound)
-      console.log('Tried path:', soundPath)
     }
   } catch (error) {}
 }
@@ -132,6 +128,11 @@ function setReminderInterval(minutes: number): void {
   intervalId = setInterval(() => {
     sendBreathingReminder()
   }, milliseconds)
+}
+
+// Hide from Dock on macOS (menu bar only app)
+if (process.platform === 'darwin' && app.dock) {
+  app.dock.hide()
 }
 
 // Create the app
