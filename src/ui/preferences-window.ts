@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, globalShortcut } from 'electron'
+import { BrowserWindow, ipcMain, globalShortcut, app } from 'electron'
 import * as path from 'path'
 import { reminderSystem } from '../utils/reminder-system'
 import { soundManager } from '../utils/sound-manager'
@@ -13,27 +13,56 @@ export function createPreferencesWindow(): void {
   }
 
   // Find preload script path first
-  const possiblePreloadPaths = [
-    path.join(__dirname, 'preferences-preload.js'), // From dist folder
-    path.join(process.cwd(), 'dist', 'preferences-preload.js'), // From project root
-  ]
-
-  let preloadPath = possiblePreloadPaths[0]
   const fs = require('fs')
-  for (const testPath of possiblePreloadPaths) {
-    if (fs.existsSync(testPath)) {
-      preloadPath = testPath
+  const isPackaged = app.isPackaged
 
-      break
+  let preloadPath: string
+
+  if (isPackaged) {
+    // In packaged app, files are in resources/app.asar or resources/app.asar.unpacked
+    preloadPath = path.join(
+      process.resourcesPath,
+      'app.asar',
+      'dist',
+      'preferences-preload.js'
+    )
+
+    // Check if it exists in unpacked resources (shouldn't be needed for preload but let's be safe)
+    if (!fs.existsSync(preloadPath)) {
+      preloadPath = path.join(
+        process.resourcesPath,
+        'app.asar.unpacked',
+        'dist',
+        'preferences-preload.js'
+      )
+    }
+
+    // Fallback to app path
+    if (!fs.existsSync(preloadPath)) {
+      preloadPath = path.join(app.getAppPath(), 'dist', 'preferences-preload.js')
+    }
+  } else {
+    // In development, try different locations
+    const possiblePreloadPaths = [
+      path.join(__dirname, 'preferences-preload.js'), // From dist folder
+      path.join(process.cwd(), 'dist', 'preferences-preload.js'), // From project root
+    ]
+
+    preloadPath = possiblePreloadPaths[0]
+    for (const testPath of possiblePreloadPaths) {
+      if (fs.existsSync(testPath)) {
+        preloadPath = testPath
+        break
+      }
     }
   }
 
   preferencesWindow = new BrowserWindow({
     width: 500,
-    height: 680,
-    minWidth: 450,
-    minHeight: 600,
-    resizable: true,
+    height: 700,
+    minWidth: 500,
+    minHeight: 700,
+    resizable: false,
     titleBarStyle: 'hiddenInset',
     vibrancy: 'sidebar', // macOS frosted glass effect
     webPreferences: {
@@ -44,21 +73,31 @@ export function createPreferencesWindow(): void {
     show: false, // Don't show until ready
   })
 
-  // Load the HTML file - try multiple paths
-  const possibleHtmlPaths = [
-    path.join(__dirname, 'preferences.html'), // From dist folder
-    path.join(process.cwd(), 'dist', 'preferences.html'), // From project root
-    path.join(process.cwd(), 'src', 'ui', 'preferences.html'), // Development mode
-  ]
+  // Load the HTML file - use proper path resolution
+  let htmlPath: string
 
-  let htmlPath = possibleHtmlPaths[0]
+  if (isPackaged) {
+    // In packaged app, files are in resources/app.asar
+    htmlPath = path.join(process.resourcesPath, 'app.asar', 'dist', 'preferences.html')
 
-  // Check which path exists
-  for (const testPath of possibleHtmlPaths) {
-    if (fs.existsSync(testPath)) {
-      htmlPath = testPath
+    // Fallback to app path
+    if (!fs.existsSync(htmlPath)) {
+      htmlPath = path.join(app.getAppPath(), 'dist', 'preferences.html')
+    }
+  } else {
+    // In development, try different locations
+    const possibleHtmlPaths = [
+      path.join(__dirname, 'preferences.html'), // From dist folder
+      path.join(process.cwd(), 'dist', 'preferences.html'), // From project root
+      path.join(process.cwd(), 'src', 'ui', 'preferences.html'), // Development mode
+    ]
 
-      break
+    htmlPath = possibleHtmlPaths[0]
+    for (const testPath of possibleHtmlPaths) {
+      if (fs.existsSync(testPath)) {
+        htmlPath = testPath
+        break
+      }
     }
   }
 
