@@ -21,23 +21,11 @@ A lightweight, cross-platform desktop application that helps you maintain mindfu
 
 ## 📸 Screenshots
 
-### Menu Bar Integration
+### Notification Preferences
 
-![Menu Bar Icon](screenshots/menubar-integration.png)
+![Notification Preferences](screenshots/preferences.png)
 
-_The app runs quietly in your menu bar with a custom breathing icon_
-
-### Notification Sound Selection
-
-![Sound Selection Menu](screenshots/sound-selection.png)
-
-_Choose from various nature sounds or run silently - includes options like chirping birds, ocean waves, and forest sounds_
-
-### Breathing Reminder Notification
-
-![Notification Example](screenshots/notification-reminder-interval.png)
-
-_Gentle, motivational notifications with breathing instructions appear at your chosen intervals_
+_Customize your notification preferences to suit your needs from Sound, Interval, and Auto-start options_
 
 ## 🎯 Why Use This App?
 
