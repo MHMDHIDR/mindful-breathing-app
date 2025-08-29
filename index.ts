@@ -61,42 +61,43 @@ function playNotificationSound(): void {
   }
 
   try {
-    const soundPath = path.join(process.cwd(), 'sounds', selectedSound)
+    // Proper ASAR-aware path resolution for sounds
+    let soundPath = path.join(app.getAppPath(), 'sounds', selectedSound)
 
-    if (fs.existsSync(soundPath)) {
+    // Handle ASAR unpacking - replace app.asar with app.asar.unpacked
+    if (soundPath.includes('app.asar') && !soundPath.includes('app.asar.unpacked')) {
+      soundPath = soundPath.replace('app.asar', 'app.asar.unpacked')
+    }
+
+    console.log('Attempting to play sound from:', soundPath)
+
+    // Fallback for development
+    if (!fs.existsSync(soundPath)) {
+      const devPath = path.join(process.cwd(), 'sounds', selectedSound)
+      if (fs.existsSync(devPath)) {
+        soundPath = devPath
+        console.log('Using development path:', soundPath)
+      }
+    }
+
+    if (soundPath && fs.existsSync(soundPath)) {
       if (process.platform === 'darwin') {
-        // macOS - use afplay
-        setTimeout(() => {
-          exec(`afplay "${soundPath}"`, { timeout: 10000 }, error => {
-            if (error) {
-              console.error('Sound playback error:', error)
-            } else {
-              console.info('Sound played successfully')
-            }
-          })
-        }, 100)
+        // macOS - use afplay without timeout (let it complete naturally)
+        exec(`afplay "${soundPath}"`, error => {
+          if (error && error.signal !== 'SIGTERM') {
+            console.error('Sound playback error:', error)
+          }
+        })
       } else if (process.platform === 'win32') {
         // Windows - use powershell
-        exec(
-          `powershell -c "(New-Object Media.SoundPlayer '${soundPath}').PlaySync();"`,
-          error => {
-            if (error) {
-            } else {
-            }
-          }
-        )
+        exec(`powershell -c "(New-Object Media.SoundPlayer '${soundPath}').PlaySync();"`)
       } else {
         // Linux - use aplay or paplay
-        exec(
-          `aplay "${soundPath}" 2>/dev/null || paplay "${soundPath}" 2>/dev/null`,
-          error => {
-            if (error) {
-            } else {
-            }
-          }
-        )
+        exec(`aplay "${soundPath}" 2>/dev/null || paplay "${soundPath}" 2>/dev/null`)
       }
     } else {
+      console.error('Sound file not found:', selectedSound)
+      console.log('Tried path:', soundPath)
     }
   } catch (error) {}
 }

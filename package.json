@@ -25,7 +25,11 @@
     "files": [
       "dist/**/*",
       "icons/**/*",
+      "sounds/**/*",
       "node_modules/**/*"
+    ],
+    "asarUnpack": [
+      "sounds/**/*"
     ],
     "mac": {
       "icon": "icons/icon.png",
