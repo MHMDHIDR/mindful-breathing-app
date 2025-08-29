@@ -8,6 +8,7 @@ let preferencesWindow: BrowserWindow | null = null
 export function createPreferencesWindow(): void {
   // Don't create multiple windows
   if (preferencesWindow && !preferencesWindow.isDestroyed()) {
+    preferencesWindow.show()
     preferencesWindow.focus()
     return
   }
@@ -162,10 +163,12 @@ export function setupPreferencesIPC(): void {
     }
   })
 
-  // Close preferences window
+  // Close preferences window (for Save/Cancel buttons)
   ipcMain.handle('preferences:close', () => {
     if (preferencesWindow && !preferencesWindow.isDestroyed()) {
-      preferencesWindow.close()
+      // Force close without triggering the close event prevention
+      preferencesWindow.destroy()
+      preferencesWindow = null
     }
   })
 }
