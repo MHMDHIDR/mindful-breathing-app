@@ -18,6 +18,8 @@ import { WaterReminder } from './reminders/water-reminder'
 import { StretchingReminder } from './reminders/stretching-reminder'
 
 let tray: Tray | null = null
+let originalIconPath: string | null = null
+let fallbackIconBuffer: Buffer | null = null
 
 // Hide from Dock on macOS (menu bar only app)
 if (process.platform === 'darwin' && app.dock) {
@@ -72,6 +74,7 @@ function createTrayIcon(): void {
   for (const testPath of possibleIconPaths) {
     if (fs.existsSync(testPath)) {
       icon = nativeImage.createFromPath(testPath)
+      originalIconPath = testPath
       break
     }
   }
@@ -99,6 +102,7 @@ function createTrayIcon(): void {
     }
 
     icon = nativeImage.createFromBuffer(buffer, size)
+    fallbackIconBuffer = buffer
   }
 
   // Platform-specific icon sizing
@@ -120,6 +124,106 @@ function createTrayIcon(): void {
 function updateTrayMenu(): void {
   if (tray) {
     tray.setContextMenu(buildContextMenu())
+    updateTrayIconAppearance()
+  }
+}
+
+function updateTrayIconAppearance(): void {
+  if (!tray) return
+
+  const isSilentMode = reminderSystem.isSilentMode()
+
+  if (isSilentMode) {
+    // Create a 50% opacity version of the original icon
+    let silentIcon: Electron.NativeImage | null = null
+    if (originalIconPath) {
+      silentIcon = nativeImage.createFromPath(originalIconPath)
+    } else if (fallbackIconBuffer) {
+      const size = { width: 16, height: 16 }
+      silentIcon = nativeImage.createFromBuffer(fallbackIconBuffer, size)
+    }
+
+    if (silentIcon) {
+      // Platform-specific icon sizing first
+      if (process.platform === 'darwin') {
+        silentIcon = silentIcon.resize({ width: 22, height: 22 })
+      } else {
+        silentIcon = silentIcon.resize({ width: 16, height: 16 })
+      }
+
+      // Create 50% opacity version by manipulating the PNG buffer
+      const pngBuffer = silentIcon.toPNG()
+      const transparentIcon = createTransparentIcon(pngBuffer, 0.5)
+
+      if (transparentIcon) {
+        if (process.platform === 'darwin') {
+          transparentIcon.setTemplateImage(true) // Keep template behavior for proper menu bar appearance
+        }
+        silentIcon = transparentIcon
+      }
+
+      // Update tooltip to indicate silent mode
+      tray.setToolTip('Mindful Wellness Reminder (Silent Mode)')
+      tray.setImage(silentIcon)
+    }
+  } else {
+    // Restore normal appearance
+    let normalIcon: Electron.NativeImage | null = null
+    if (originalIconPath) {
+      normalIcon = nativeImage.createFromPath(originalIconPath)
+    } else if (fallbackIconBuffer) {
+      const size = { width: 16, height: 16 }
+      normalIcon = nativeImage.createFromBuffer(fallbackIconBuffer, size)
+    }
+
+    if (normalIcon) {
+      // Platform-specific icon sizing
+      if (process.platform === 'darwin') {
+        normalIcon = normalIcon.resize({ width: 22, height: 22 })
+        normalIcon.setTemplateImage(true)
+      } else {
+        normalIcon = normalIcon.resize({ width: 16, height: 16 })
+      }
+
+      tray.setToolTip('Mindful Wellness Reminder')
+      tray.setImage(normalIcon)
+    }
+  }
+}
+
+function createTransparentIcon(
+  pngBuffer: Buffer,
+  opacity: number
+): Electron.NativeImage | null {
+  try {
+    // For a simple approach, we'll create a new image with reduced opacity
+    // by modifying the alpha channel of each pixel
+    const originalImage = nativeImage.createFromBuffer(pngBuffer)
+    const size = originalImage.getSize()
+
+    // Create a new buffer for the transparent version
+    const canvas = Buffer.alloc(size.width * size.height * 4) // RGBA
+
+    // Get the original image as a bitmap (this is a simplified approach)
+    // Since we can't easily manipulate PNG pixel data directly in Electron,
+    // we'll use a different approach: create a semi-transparent overlay
+
+    // For now, let's use a simpler approach - create a faded version
+    // by creating a new image with the same data but modified alpha
+    const bitmap = originalImage.toBitmap()
+
+    // Modify alpha channel for each pixel
+    for (let i = 0; i < bitmap.length; i += 4) {
+      canvas[i] = bitmap[i] // R
+      canvas[i + 1] = bitmap[i + 1] // G
+      canvas[i + 2] = bitmap[i + 2] // B
+      canvas[i + 3] = Math.floor(bitmap[i + 3] * opacity) // A (reduced by opacity)
+    }
+
+    return nativeImage.createFromBuffer(canvas, size)
+  } catch (error) {
+    console.warn('Failed to create transparent icon:', error)
+    return null
   }
 }
 

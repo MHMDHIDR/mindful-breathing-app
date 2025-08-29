@@ -26,7 +26,7 @@ export function buildContextMenu(): Menu {
       type: 'separator',
     },
     {
-      label: isSilentMode ? '🔊 Restore Reminders' : '🔇 Silent Mode',
+      label: isSilentMode ? '✅ Enable Reminders' : '🔕 Silent Mode',
       click: () => {
         reminderSystem.toggleSilentMode()
       },
