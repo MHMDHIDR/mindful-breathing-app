@@ -60,10 +60,11 @@ export function createPreferencesWindow(): void {
 
   preferencesWindow = new BrowserWindow({
     width: 500,
-    height: 700,
     minWidth: 500,
+    maxWidth: 500,
     minHeight: 700,
-    resizable: false,
+    maxHeight: 900,
+    resizable: true,
     titleBarStyle: 'hiddenInset',
     vibrancy: 'sidebar', // macOS frosted glass effect
     webPreferences: {
