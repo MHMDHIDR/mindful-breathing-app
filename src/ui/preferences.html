@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preferences</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      overflow: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .window-header {
+      height: 52px;
+      background: #f5f5f7;
+      border-bottom: 1px solid #d2d2d7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-app-region: drag;
+    }
+
+    .window-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+
+    .preferences-container {
+      padding: 20px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+    }
+
+    .preference-section {
+      background: white;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f2f2f7;
+    }
+
+    .section-icon {
+      font-size: 24px;
+      margin-right: 12px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #1d1d1f;
+    }
+
+    .preference-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      min-height: 32px;
+    }
+
+    .preference-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .preference-label {
+      font-size: 13px;
+      color: #1d1d1f;
+      font-weight: 500;
+    }
+
+    .preference-description {
+      font-size: 11px;
+      color: #86868b;
+      margin-top: 2px;
+    }
+
+    .preference-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Toggle Switch */
+    .toggle {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      background: #e5e5ea;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .toggle.active {
+      background: #007aff;
+    }
+
+    .toggle-handle {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle.active .toggle-handle {
+      transform: translateX(18px);
+    }
+
+    /* Dropdown */
+    .dropdown {
+      min-width: 120px;
+      height: 28px;
+      background: white;
+      border: 1px solid #d2d2d7;
+      border-radius: 6px;
+      padding: 0 8px;
+      font-size: 12px;
+      color: #1d1d1f;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 6px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 28px;
+    }
+
+    .dropdown:focus {
+      outline: none;
+      border-color: #007aff;
+      box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+    }
+
+    /* Test Button */
+    .test-button {
+      background: #f2f2f7;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 11px;
+      color: #007aff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .test-button:hover {
+      background: #e5e5ea;
+    }
+
+    .test-button:active {
+      background: #d2d2d7;
+    }
+
+    /* Status indicator */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #86868b;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #86868b;
+    }
+
+    .status-dot.active {
+      background: #30d158;
+    }
+
+    /* Footer */
+    .preferences-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50px;
+      background: #f5f5f7;
+      border-top: 1px solid #d2d2d7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .footer-button {
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 20px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .footer-button:hover {
+      background: #0051d0;
+    }
+
+    .footer-button.secondary {
+      background: #f2f2f7;
+      color: #1d1d1f;
+    }
+
+    .footer-button.secondary:hover {
+      background: #e5e5ea;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="window-header">
+    <div class="window-title">Preferences</div>
+  </div>
+
+  <div class="preferences-container">
+    <!-- Breathing Reminders Section -->
+    <div class="preference-section">
+      <div class="section-header">
+        <div class="section-icon">🧘</div>
+        <div class="section-title">Breathing Reminders</div>
+      </div>
+
+      <div class="preference-row">
+        <div>
+          <div class="preference-label">Enable breathing reminders</div>
+          <div class="preference-description">Get periodic reminders to take mindful breaths</div>
+        </div>
+        <div class="preference-control">
+          <div class="status-indicator">
+            <div class="status-dot" id="breathing-status"></div>
+            <span id="breathing-status-text">Disabled</span>
+          </div>
+          <div class="toggle" id="breathing-toggle">
+            <div class="toggle-handle"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preference-row" id="breathing-interval-row">
+        <div class="preference-label">Reminder interval</div>
+        <select class="dropdown" id="breathing-interval">
+          <option value="1">Every 1 minute</option>
+          <option value="5">Every 5 minutes</option>
+          <option value="15">Every 15 minutes</option>
+          <option value="30">Every 30 minutes</option>
+          <option value="45">Every 45 minutes</option>
+          <option value="60">Every 60 minutes</option>
+        </select>
+      </div>
+
+      <div class="preference-row" id="breathing-sound-row">
+        <div class="preference-label">Notification sound</div>
+        <div class="preference-control">
+          <select class="dropdown" id="breathing-sound">
+            <option value="No Sound">🔇 Silent</option>
+          </select>
+          <button class="test-button" id="breathing-test">Test</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Water Reminders Section -->
+    <div class="preference-section">
+      <div class="section-header">
+        <div class="section-icon">💧</div>
+        <div class="section-title">Water Reminders</div>
+      </div>
+
+      <div class="preference-row">
+        <div>
+          <div class="preference-label">Enable water reminders</div>
+          <div class="preference-description">Stay hydrated with regular water reminders</div>
+        </div>
+        <div class="preference-control">
+          <div class="status-indicator">
+            <div class="status-dot" id="water-status"></div>
+            <span id="water-status-text">Disabled</span>
+          </div>
+          <div class="toggle" id="water-toggle">
+            <div class="toggle-handle"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preference-row" id="water-interval-row">
+        <div class="preference-label">Reminder interval</div>
+        <select class="dropdown" id="water-interval">
+          <option value="1">Every 1 minute</option>
+          <option value="5">Every 5 minutes</option>
+          <option value="15">Every 15 minutes</option>
+          <option value="30">Every 30 minutes</option>
+          <option value="45">Every 45 minutes</option>
+          <option value="60">Every 60 minutes</option>
+        </select>
+      </div>
+
+      <div class="preference-row" id="water-sound-row">
+        <div class="preference-label">Notification sound</div>
+        <div class="preference-control">
+          <select class="dropdown" id="water-sound">
+            <option value="No Sound">🔇 Silent</option>
+          </select>
+          <button class="test-button" id="water-test">Test</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stretching Reminders Section -->
+    <div class="preference-section">
+      <div class="section-header">
+        <div class="section-icon">🤸‍♀️</div>
+        <div class="section-title">Stretching Reminders</div>
+      </div>
+
+      <div class="preference-row">
+        <div>
+          <div class="preference-label">Enable stretching reminders</div>
+          <div class="preference-description">Get reminders to stretch and move your body</div>
+        </div>
+        <div class="preference-control">
+          <div class="status-indicator">
+            <div class="status-dot" id="stretching-status"></div>
+            <span id="stretching-status-text">Disabled</span>
+          </div>
+          <div class="toggle" id="stretching-toggle">
+            <div class="toggle-handle"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preference-row" id="stretching-interval-row">
+        <div class="preference-label">Reminder interval</div>
+        <select class="dropdown" id="stretching-interval">
+          <option value="1">Every 1 minute</option>
+          <option value="5">Every 5 minutes</option>
+          <option value="15">Every 15 minutes</option>
+          <option value="30">Every 30 minutes</option>
+          <option value="45">Every 45 minutes</option>
+          <option value="60">Every 60 minutes</option>
+        </select>
+      </div>
+
+      <div class="preference-row" id="stretching-sound-row">
+        <div class="preference-label">Notification sound</div>
+        <div class="preference-control">
+          <select class="dropdown" id="stretching-sound">
+            <option value="No Sound">🔇 Silent</option>
+          </select>
+          <button class="test-button" id="stretching-test">Test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="preferences-footer">
+    <button class="footer-button secondary" id="cancel-btn">Cancel</button>
+    <button class="footer-button" id="save-btn">Save Changes</button>
+  </div>
+
+  <script src="preferences-preload.js"></script>
+</body>
+
+</html>

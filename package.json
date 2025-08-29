@@ -3,19 +3,19 @@
   "version": "1.0.0",
   "description": "A lightweight desktop app for mindful breathing reminders",
   "author": "Mohammed Haydar",
-  "module": "index.ts",
+  "module": "src/main.ts",
   "type": "module",
   "private": true,
   "scripts": {
     "start": "bun run build:ts && electron .",
-    "build:ts": "bun build ./index.ts --outdir ./dist --target node --outfile index.js --external electron --external node-notifier",
+    "build:ts": "bun build ./src/main.ts --outdir ./dist --target node --outfile main.js --external electron --external node-notifier --external electron-store && bun build src/ui/preferences-preload.ts --outdir dist --target node --format cjs --external electron && cp ./src/ui/preferences.html ./dist/",
     "dev": "bun run build:ts && electron .",
     "dist": "bun run build:ts && electron-builder",
     "dist:mac": "bun run build:ts && electron-builder --mac",
     "dist:win": "bun run build:ts && electron-builder --win",
     "dist:linux": "bun run build:ts && electron-builder --linux"
   },
-  "main": "dist/index.js",
+  "main": "dist/main.js",
   "build": {
     "appId": "com.mindfulbreathing.app",
     "productName": "Mindful Breathing",
@@ -26,6 +26,7 @@
       "dist/**/*",
       "icons/**/*",
       "sounds/**/*",
+      "src/ui/**/*",
       "node_modules/**/*"
     ],
     "asarUnpack": [
@@ -86,6 +87,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "electron-store": "^10.1.0",
     "node-notifier": "^10.0.1"
   }
 }

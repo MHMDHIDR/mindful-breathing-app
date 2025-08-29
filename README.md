@@ -4,9 +4,10 @@ A lightweight, cross-platform desktop application that helps you maintain mindfu
 
 ## 🌟 Features
 
-- **Smart Notifications**: Receive motivational breathing reminders with randomized messages
-- **Customizable Intervals**: Set reminders every 15, 30, 45, 60, or 90 minutes
-- **Nature Sound Integration**: Choose from relaxing sounds like ocean waves, forest ambience, and bird songs
+- **Smart Notifications**: Receive motivational reminders with randomized messages
+- **Multiple Reminder Types**: Breathing exercises, water hydration, and stretching breaks
+- **Customizable Intervals**: Set independent intervals for each reminder type
+- **Nature Sound Integration**: Choose different sounds for each reminder type
 - **Guided Breathing**: Various breathing techniques including:
   - 4-4-4 breathing (inhale, hold, exhale)
   - 4-7-8 breathing technique
@@ -121,7 +122,13 @@ The app sends two types of notifications:
 
 ```
 mindful-breathing-app/
-├── index.ts              # Main application file
+├── src/                  # Source code (modular architecture)
+│   ├── main.ts           # Main application entry point
+│   ├── utils/            # Core utilities (sound, notifications, settings)
+│   ├── types/            # TypeScript interfaces and types
+│   ├── data/             # Data files (messages, sounds, instructions)
+│   ├── reminders/        # Reminder implementations (breathing, water, stretching)
+│   └── ui/               # User interface components
 ├── package.json          # Dependencies and scripts
 ├── tsconfig.json         # TypeScript configuration
 ├── icons/                # App icons
@@ -154,6 +161,8 @@ bun run dist
 - **Framework**: Electron
 - **Language**: TypeScript
 - **Notifications**: node-notifier
+- **Settings**: electron-store
+- **Architecture**: Modular, extensible plugin system
 - **Platform**: Cross-platform desktop
 
 ## 🔧 Configuration
