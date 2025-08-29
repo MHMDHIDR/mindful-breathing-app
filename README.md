@@ -6,6 +6,7 @@ A lightweight, cross-platform desktop application that helps you maintain mindfu
 
 - **Smart Notifications**: Receive motivational breathing reminders with randomized messages
 - **Customizable Intervals**: Set reminders every 15, 30, 45, 60, or 90 minutes
+- **Nature Sound Integration**: Choose from relaxing sounds like ocean waves, forest ambience, and bird songs
 - **Guided Breathing**: Various breathing techniques including:
   - 4-4-4 breathing (inhale, hold, exhale)
   - 4-7-8 breathing technique
@@ -16,6 +17,26 @@ A lightweight, cross-platform desktop application that helps you maintain mindfu
 - **Test Notifications**: Try out notifications before setting your schedule
 - **Quick Exercises**: Access instant breathing exercises from the menu
 - **Cross-platform**: Works on macOS, Windows, and Linux
+
+## 📸 Screenshots
+
+### Menu Bar Integration
+
+![Menu Bar Icon](screenshots/menubar-integration.png)
+
+_The app runs quietly in your menu bar with a custom breathing icon_
+
+### Notification Sound Selection
+
+![Sound Selection Menu](screenshots/sound-selection.png)
+
+_Choose from various nature sounds or run silently - includes options like chirping birds, ocean waves, and forest sounds_
+
+### Breathing Reminder Notification
+
+![Notification Example](screenshots/notification-reminder-interval.png)
+
+_Gentle, motivational notifications with breathing instructions appear at your chosen intervals_
 
 ## 🎯 Why Use This App?
 
@@ -83,6 +104,7 @@ Right-click the tray icon to access:
 - **📢 Test Notification**: Try out a breathing reminder
 - **🎯 Quick Breathing Exercise**: Immediate guided breathing session
 - **⏱️ Reminder Interval**: Choose your preferred reminder frequency
+- **🔊 Notification Sound**: Select from relaxing nature sounds or silent mode
 - **🚀 Start at Login**: Toggle auto-start when your computer boots
 - **❌ Quit**: Stop the application
 
@@ -102,7 +124,11 @@ mindful-breathing-app/
 ├── index.ts              # Main application file
 ├── package.json          # Dependencies and scripts
 ├── tsconfig.json         # TypeScript configuration
+├── icons/                # App icons
+├── sounds/               # Nature sound files for notifications
+├── screenshots/          # App screenshots for documentation
 ├── dist/                 # Built files (auto-generated)
+├── release/              # Distribution packages (auto-generated)
 └── README.md            # This file
 ```
 
