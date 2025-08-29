@@ -1,14 +1,14 @@
-# 🧘 Mindful Breathing App
+# 🧘 Mindful Wellness App
 
-A lightweight, cross-platform desktop application that helps you maintain mindful breathing habits throughout your workday. The app runs quietly in your system tray/menu bar and sends gentle reminders to take breathing breaks at customizable intervals.
+A lightweight, cross-platform desktop application that helps you maintain mindful wellness habits throughout your workday. The app runs quietly in your system tray/menu bar and sends gentle reminders to take wellness breaks at customizable intervals.
 
 ## 🌟 Features
 
 - **Smart Notifications**: Receive motivational reminders with randomized messages
-- **Multiple Reminder Types**: Breathing exercises, water hydration, and stretching breaks
+- **Multiple Reminder Types**: Wellness exercises, water hydration, and stretching breaks
 - **Customizable Intervals**: Set independent intervals for each reminder type
 - **Nature Sound Integration**: Choose different sounds for each reminder type
-- **Guided Breathing**: Various breathing techniques including:
+- **Guided Wellness**: Various wellness techniques including:
   - 4-4-4 breathing (inhale, hold, exhale)
   - 4-7-8 breathing technique
   - Box breathing
@@ -82,16 +82,16 @@ bun run dist
 ### Getting Started
 
 1. **Launch the App**: Run `bun run dev` or `bun run start`
-2. **Find the Icon**: Look for the breathing app icon in your menu bar (macOS) or system tray (Windows/Linux)
+2. **Find the Icon**: Look for the wellness app icon in your menu bar (macOS) or system tray (Windows/Linux)
 3. **Initial Setup**: The app will show a welcome notification confirming it's running
-4. **Default Settings**: Breathing reminders are set to every 30 minutes by default
+4. **Default Settings**: Wellness reminders are set to every 30 minutes by default
 
 ### Menu Options
 
 Right-click the tray icon to access:
 
-- **📢 Test Notification**: Try out a breathing reminder
-- **🎯 Quick Breathing Exercise**: Immediate guided breathing session
+- **📢 Test Notification**: Try out a wellness reminder
+- **🎯 Quick Wellness Exercise**: Immediate guided wellness session
 - **⏱️ Reminder Interval**: Choose your preferred reminder frequency
 - **🔊 Notification Sound**: Select from relaxing nature sounds or silent mode
 - **🚀 Start at Login**: Toggle auto-start when your computer boots
@@ -101,8 +101,8 @@ Right-click the tray icon to access:
 
 The app sends two types of notifications:
 
-1. **Reminder Notifications**: Motivational messages encouraging you to take a breathing break
-2. **Guided Exercise Notifications**: Step-by-step breathing instructions
+1. **Reminder Notifications**: Motivational messages encouraging you to take a wellness break
+2. **Guided Exercise Notifications**: Step-by-step wellness instructions
 
 ## 🛠️ Development
 

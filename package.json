@@ -1,7 +1,7 @@
 {
-  "name": "mindful-breathing-app",
+  "name": "mindful-wellness-app",
   "version": "1.0.0",
-  "description": "A lightweight desktop app for mindful breathing reminders",
+  "description": "A lightweight desktop app for mindful wellness reminders",
   "author": "Mohammed Haydar",
   "module": "src/main.ts",
   "type": "module",
@@ -17,8 +17,8 @@
   },
   "main": "dist/main.js",
   "build": {
-    "appId": "com.mindfulbreathing.app",
-    "productName": "Mindful Breathing",
+    "appId": "com.mindfulwellness.app",
+    "productName": "Mindful Wellness",
     "directories": {
       "output": "release"
     },
