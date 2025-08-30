@@ -8,6 +8,16 @@ export interface ReminderConfig {
   icon: string
 }
 
+export interface CustomReminderData {
+  id: string
+  name: string
+  icon: string
+  messages: string[]
+  instructions: string[]
+  defaultInterval: number
+  createdAt: string
+}
+
 export interface ReminderMessage {
   title: string
   message: string
@@ -16,6 +26,7 @@ export interface ReminderMessage {
 
 export interface AppSettings {
   reminders: Record<string, ReminderConfig>
+  customReminders: Record<string, CustomReminderData>
   globalSoundEnabled: boolean
   startAtLogin: boolean
   silentMode: boolean

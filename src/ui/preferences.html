@@ -57,6 +57,7 @@
       margin-bottom: 16px;
       padding-bottom: 12px;
       border-bottom: 1px solid #f2f2f7;
+      justify-content: space-between;
     }
 
     .section-icon {
@@ -68,6 +69,12 @@
       font-size: 16px;
       font-weight: 600;
       color: #1d1d1f;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section-header .custom-reminder-actions {
+      margin-left: auto;
     }
 
     .preference-row {
@@ -235,6 +242,191 @@
     .footer-button.secondary:hover {
       background: #e5e5ea;
     }
+
+    /* Custom Reminders Styles */
+    .add-reminder-button {
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 12px;
+    }
+
+    .add-reminder-button:hover {
+      background: #0051d0;
+    }
+
+    .custom-reminder-item {
+      border: 1px solid #e5e5ea;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: #fafafa;
+    }
+
+    .custom-reminder-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .custom-reminder-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .custom-reminder-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .action-button:hover {
+      background: #e5e5ea;
+    }
+
+    .custom-reminder-preview {
+      font-size: 11px;
+      color: #86868b;
+      line-height: 1.4;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #1d1d1f;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #d2d2d7;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #007aff;
+      box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+    }
+
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .emoji-picker {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .emoji-option {
+      background: #f2f2f7;
+      border: none;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .emoji-option:hover {
+      background: #e5e5ea;
+    }
+
+    .emoji-option.selected {
+      background: #007aff;
+      color: white;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+
+    .modal-button {
+      padding: 8px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-button.primary {
+      background: #007aff;
+      color: white;
+    }
+
+    .modal-button.primary:hover {
+      background: #0051d0;
+    }
+
+    .modal-button.secondary {
+      background: #f2f2f7;
+      color: #1d1d1f;
+    }
+
+    .modal-button.secondary:hover {
+      background: #e5e5ea;
+    }
   </style>
 </head>
 
@@ -379,6 +571,77 @@
           </select>
           <button class="test-button" id="stretching-test">Test</button>
         </div>
+      </div>
+    </div>
+
+    <!-- Custom Reminders Section -->
+    <div class="preference-section">
+      <div class="section-header">
+        <div class="section-icon">⚡</div>
+        <div class="section-title">Custom Reminders</div>
+      </div>
+
+      <div class="preference-row">
+        <div>
+          <div class="preference-label">Your personal reminders</div>
+          <div class="preference-description">Create custom reminders with your own messages and instructions</div>
+        </div>
+        <button class="add-reminder-button" id="add-custom-reminder">+ Add Reminder</button>
+      </div>
+
+      <div id="custom-reminders-list">
+        <!-- Custom reminders will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Reminder Modal -->
+  <div class="modal" id="custom-reminder-modal">
+    <div class="modal-content">
+      <div class="modal-header" id="modal-title">Add Custom Reminder</div>
+
+      <div class="form-group">
+        <label class="form-label" for="reminder-name">Reminder Name</label>
+        <input type="text" class="form-input" id="reminder-name" placeholder="e.g., Eye Rest, Posture Check, Gratitude">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reminder-icon">Choose an Icon</label>
+        <div class="emoji-picker">
+          <button class="emoji-option" data-emoji="👀">👀</button>
+          <button class="emoji-option" data-emoji="🧘">🧘</button>
+          <button class="emoji-option" data-emoji="💪">💪</button>
+          <button class="emoji-option" data-emoji="❤️">❤️</button>
+          <button class="emoji-option" data-emoji="🧠">🧠</button>
+          <button class="emoji-option" data-emoji="✨">✨</button>
+          <button class="emoji-option" data-emoji="🎯">🎯</button>
+          <button class="emoji-option" data-emoji="🌟">🌟</button>
+          <button class="emoji-option" data-emoji="🔔">🔔</button>
+          <button class="emoji-option" data-emoji="⏰">⏰</button>
+          <button class="emoji-option" data-emoji="📝">📝</button>
+          <button class="emoji-option" data-emoji="🌱">🌱</button>
+          <button class="emoji-option" data-emoji="🎨">🎨</button>
+          <button class="emoji-option" data-emoji="🏃">🏃</button>
+          <button class="emoji-option" data-emoji="🤸">🤸</button>
+          <button class="emoji-option" data-emoji="🧘‍♀️">🧘‍♀️</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reminder-messages">Messages (one per line)</label>
+        <textarea class="form-input form-textarea" id="reminder-messages"
+          placeholder="Enter motivational messages, one per line:&#10;Time to rest your eyes! Look away from the screen 👀&#10;Give your eyes a break - look at something 20 feet away 🌅&#10;Your eyes deserve some rest! Try the 20-20-20 rule ✨"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reminder-instructions">Instructions (one per line)</label>
+        <textarea class="form-input form-textarea" id="reminder-instructions"
+          placeholder="Enter specific instructions, one per line:&#10;Look at something 20 feet away for 20 seconds&#10;Close your eyes and blink slowly 10 times&#10;Focus on a distant object for 30 seconds"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-button secondary" id="modal-cancel">Cancel</button>
+        <button class="modal-button primary" id="modal-save">Save Reminder</button>
       </div>
     </div>
   </div>

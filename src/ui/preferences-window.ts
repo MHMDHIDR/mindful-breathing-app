@@ -131,10 +131,12 @@ export function setupPreferencesIPC(): void {
   ipcMain.handle('preferences:get-settings', () => {
     const reminders = reminderSystem.getAllConfigs()
     const sounds = soundManager.getAvailableSounds()
+    const customReminders = reminderSystem.getCustomReminders()
 
     return {
       reminders,
       sounds,
+      customReminders,
     }
   })
 
@@ -170,6 +172,54 @@ export function setupPreferencesIPC(): void {
       // Force close without triggering the close event prevention
       preferencesWindow.destroy()
       preferencesWindow = null
+    }
+  })
+
+  // Custom Reminders IPC Handlers
+  ipcMain.handle('preferences:get-custom-reminders', () => {
+    try {
+      return reminderSystem.getCustomReminders()
+    } catch (error) {
+      return []
+    }
+  })
+
+  ipcMain.handle(
+    'preferences:add-custom-reminder',
+    (_, name: string, messages: string[], instructions: string[], icon: string) => {
+      try {
+        const id = reminderSystem.addCustomReminder(name, messages, instructions, icon)
+        return { success: true, id }
+      } catch (error) {
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
+      }
+    }
+  )
+
+  ipcMain.handle('preferences:update-custom-reminder', (_, id: string, updates: any) => {
+    try {
+      reminderSystem.updateCustomReminder(id, updates)
+      return { success: true }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
+    }
+  })
+
+  ipcMain.handle('preferences:delete-custom-reminder', (_, id: string) => {
+    try {
+      reminderSystem.deleteCustomReminder(id)
+      return { success: true }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
     }
   })
 }

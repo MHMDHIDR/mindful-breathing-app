@@ -57,7 +57,8 @@ function setupReminders(): void {
   reminderSystem.registerReminder(new WaterReminder())
   reminderSystem.registerReminder(new StretchingReminder())
 
-  // TODO: Add more reminder types here (eye breaks, posture checks, etc.)
+  // Load custom reminders from storage
+  reminderSystem.loadCustomReminders()
 }
 
 function createTrayIcon(): void {

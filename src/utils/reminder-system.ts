@@ -1,6 +1,7 @@
 import type { BaseReminder, ReminderConfig } from '../types/reminder-types'
 import { notificationManager } from './notification-manager'
 import { settingsManager } from './settings-manager'
+import { CustomReminder } from '../reminders/custom-reminder'
 
 // Callback for menu updates
 let onConfigChangeCallback: (() => void) | null = null
@@ -158,6 +159,105 @@ class ReminderSystemImpl {
 
   isSilentMode(): boolean {
     return settingsManager.getSilentMode()
+  }
+
+  // Custom Reminders Management
+  loadCustomReminders(): void {
+    const customReminders = settingsManager.getCustomReminders()
+    Object.values(customReminders).forEach(customData => {
+      const customReminder = new CustomReminder(customData)
+      this.registerReminder(customReminder)
+    })
+  }
+
+  addCustomReminder(
+    name: string,
+    messages: string[],
+    instructions: string[],
+    icon: string = '🔔'
+  ): string {
+    // Generate unique ID
+    const id = `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+
+    // Create custom reminder data
+    const customData: import('../types/reminder-types').CustomReminderData = {
+      id,
+      name,
+      icon,
+      messages,
+      instructions,
+      defaultInterval: 30, // Default to 30 minutes like breathing
+      createdAt: new Date().toISOString(),
+    }
+
+    // Save to settings
+    settingsManager.addCustomReminder(customData)
+
+    // Create and register the reminder
+    const customReminder = new CustomReminder(customData)
+    this.registerReminder(customReminder)
+
+    // Notify menu to update
+    if (onConfigChangeCallback) {
+      onConfigChangeCallback()
+    }
+
+    return id
+  }
+
+  updateCustomReminder(
+    id: string,
+    updates: {
+      name?: string
+      messages?: string[]
+      instructions?: string[]
+      icon?: string
+    }
+  ): void {
+    const customData = settingsManager.getCustomReminder(id)
+    if (!customData) return
+
+    // Update the stored data
+    settingsManager.updateCustomReminder(id, updates)
+
+    // Remove old reminder and add updated one
+    this.reminders.delete(id)
+    this.stopReminder(id)
+
+    const updatedData = { ...customData, ...updates }
+    const customReminder = new CustomReminder(updatedData)
+    this.registerReminder(customReminder)
+
+    // Restart if it was enabled
+    const config = settingsManager.getReminderConfig(id)
+    if (config?.enabled) {
+      this.startReminder(id)
+    }
+
+    // Notify menu to update
+    if (onConfigChangeCallback) {
+      onConfigChangeCallback()
+    }
+  }
+
+  deleteCustomReminder(id: string): void {
+    // Stop the reminder
+    this.stopReminder(id)
+
+    // Remove from reminders map
+    this.reminders.delete(id)
+
+    // Remove from settings
+    settingsManager.deleteCustomReminder(id)
+
+    // Notify menu to update
+    if (onConfigChangeCallback) {
+      onConfigChangeCallback()
+    }
+  }
+
+  getCustomReminders(): import('../types/reminder-types').CustomReminderData[] {
+    return Object.values(settingsManager.getCustomReminders())
   }
 }
 

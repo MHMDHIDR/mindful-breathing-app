@@ -40,6 +40,7 @@ class SettingsManagerImpl {
         startAtLogin: false,
         silentMode: false,
         silentModeOriginalStates: {},
+        customReminders: {},
       },
     })
   }
@@ -100,6 +101,49 @@ class SettingsManagerImpl {
 
   setSilentModeOriginalStates(states: Record<string, boolean>): void {
     this.store.set('silentModeOriginalStates', states)
+  }
+
+  // Custom Reminders Management
+  getCustomReminders(): Record<
+    string,
+    import('../types/reminder-types').CustomReminderData
+  > {
+    return this.store.get('customReminders', {})
+  }
+
+  getCustomReminder(
+    id: string
+  ): import('../types/reminder-types').CustomReminderData | null {
+    const customReminders = this.getCustomReminders()
+    return customReminders[id] || null
+  }
+
+  addCustomReminder(
+    reminderData: import('../types/reminder-types').CustomReminderData
+  ): void {
+    const customReminders = this.getCustomReminders()
+    customReminders[reminderData.id] = reminderData
+    this.store.set('customReminders', customReminders)
+  }
+
+  updateCustomReminder(
+    id: string,
+    updates: Partial<import('../types/reminder-types').CustomReminderData>
+  ): void {
+    const customReminders = this.getCustomReminders()
+    if (customReminders[id]) {
+      customReminders[id] = { ...customReminders[id], ...updates }
+      this.store.set('customReminders', customReminders)
+    }
+  }
+
+  deleteCustomReminder(id: string): void {
+    const customReminders = this.getCustomReminders()
+    delete customReminders[id]
+    this.store.set('customReminders', customReminders)
+
+    // Also remove the reminder config
+    this.store.delete(`reminders.${id}`)
   }
 }
 
