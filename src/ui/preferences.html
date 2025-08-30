@@ -254,6 +254,7 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
+      text-wrap: nowrap;
       margin-top: 12px;
     }
 
@@ -363,8 +364,9 @@
     }
 
     .form-textarea {
-      min-height: 80px;
-      resize: vertical;
+      min-height: 120px;
+      resize: none;
+      line-height: 1.75;
     }
 
     .emoji-picker {
@@ -586,7 +588,7 @@
           <div class="preference-label">Your personal reminders</div>
           <div class="preference-description">Create custom reminders with your own messages and instructions</div>
         </div>
-        <button class="add-reminder-button" id="add-custom-reminder">+ Add Reminder</button>
+        <button class="add-reminder-button" id="add-custom-reminder">+ Add</button>
       </div>
 
       <div id="custom-reminders-list">

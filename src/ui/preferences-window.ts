@@ -2,6 +2,10 @@ import { BrowserWindow, ipcMain, globalShortcut, app } from 'electron'
 import * as path from 'path'
 import { reminderSystem } from '../utils/reminder-system'
 import { soundManager } from '../utils/sound-manager'
+import {
+  getSecureWebPreferences,
+  applyDevToolsProtection,
+} from '../utils/security-manager'
 
 let preferencesWindow: BrowserWindow | null = null
 
@@ -63,17 +67,21 @@ export function createPreferencesWindow(): void {
     minWidth: 500,
     maxWidth: 500,
     minHeight: 700,
-    maxHeight: 900,
+    maxHeight: 100,
     resizable: true,
     titleBarStyle: 'hiddenInset',
     vibrancy: 'sidebar', // macOS frosted glass effect
-    webPreferences: {
+    webPreferences: getSecureWebPreferences({
+      // Override secure defaults where needed for this window
       nodeIntegration: true,
       contextIsolation: false,
       preload: preloadPath,
-    },
+    }),
     show: false, // Don't show until ready
   })
+
+  // Apply DevTools protection and security measures
+  applyDevToolsProtection(preferencesWindow)
 
   // Load the HTML file - use proper path resolution
   let htmlPath: string
