@@ -38,12 +38,13 @@
     }
 
     .preferences-container {
-      padding: 20px;
+      padding: 20px 20px 50px;
       height: calc(100vh - 52px);
       overflow-y: auto;
     }
 
-    .preference-section {
+    .preference-section,
+    .custom-reminders-list {
       background: white;
       border-radius: 10px;
       margin-bottom: 20px;
@@ -577,7 +578,7 @@
     </div>
 
     <!-- Custom Reminders Section -->
-    <div class="preference-section">
+    <div class="custom-reminders-list">
       <div class="section-header">
         <div class="section-icon">⚡</div>
         <div class="section-title">Custom Reminders</div>
@@ -591,10 +592,8 @@
         <button class="add-reminder-button" id="add-custom-reminder">+ Add</button>
       </div>
 
-      <div id="custom-reminders-list">
-        <!-- Custom reminders will be populated here -->
-      </div>
     </div>
+    <div id="custom-reminders-list"></div>
   </div>
 
   <!-- Custom Reminder Modal -->

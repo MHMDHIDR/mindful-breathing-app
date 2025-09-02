@@ -4,8 +4,8 @@ export const availableSounds = [
   'Nature Sounds.mp3',
   'Relaxing Ocean Sounds.mp3',
   'Relaxing Ocean Waves.mp3',
-  'Chirping Sound Effect.mp3',
-  'Chirping Sound Effects.mp3',
-  'Chirping Bird Sound.mp3',
+  'Chirping Sound Effects 1.mp3',
   'Chirping Sound Effects 2.mp3',
+  'Chirping Sound Effects 3.mp3',
+  'Chirping Sound Effect 4.mp3',
 ]

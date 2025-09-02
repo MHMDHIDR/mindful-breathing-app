@@ -63,11 +63,12 @@ export function createPreferencesWindow(): void {
   }
 
   preferencesWindow = new BrowserWindow({
-    width: 500,
-    minWidth: 500,
-    maxWidth: 500,
-    minHeight: 700,
-    maxHeight: 100,
+    width: 720,
+    minWidth: 720,
+    maxWidth: 720,
+    height: 600,
+    minHeight: 600,
+    maxHeight: 1200,
     resizable: true,
     titleBarStyle: 'hiddenInset',
     vibrancy: 'sidebar', // macOS frosted glass effect
@@ -181,6 +182,25 @@ export function setupPreferencesIPC(): void {
       preferencesWindow.destroy()
       preferencesWindow = null
     }
+  })
+
+  // Dynamically resize window based on custom reminders count
+  ipcMain.handle('preferences:resize-window', (_, customRemindersCount: number) => {
+    if (preferencesWindow && !preferencesWindow.isDestroyed()) {
+      // Base height for 2x2 grid (3 main reminders + custom section)
+      const baseHeight = 600
+      // Additional height per custom reminder
+      const additionalHeightPerReminder = 80
+      // Calculate new height
+      const newHeight = Math.min(
+        baseHeight + customRemindersCount * additionalHeightPerReminder,
+        1200 // Maximum height
+      )
+
+      preferencesWindow.setSize(720, newHeight)
+      return { success: true, newHeight }
+    }
+    return { success: false, error: 'Window not available' }
   })
 
   // Custom Reminders IPC Handlers
